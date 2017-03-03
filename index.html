@@ -1,27 +1,8 @@
-
-<!-- saved from url=(0042)http://localhost:63342/untitled/ceshi.html -->
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="UTF-8">
+<html>
+<meta charset="UTF-8">
 <title>贪吃蛇2.3</title>
-</head><body>
-<style>
-    .stop{
-        margin-left: 850px;
-        width: 150px;
-        height: 80px;
-        font-size: 25pt;
-    }
-    .snake{
-        float: left;
+<body>
 
-    }
-    .begin{
-        margin-left: 850px;
-        margin-top: 20px;
-        width: 150px;
-        height: 80px;
-        font-size: 25pt;
-    }
-</style>
 
 <script>
     var map;//地图
@@ -29,6 +10,7 @@
     var snake;//蛇
     var sum=0;
     var timer;
+    var Body=[];
     function style(node,width,height,position,co,X,Y){
         node.style.width= width+'px';
         node.style.height= height+'px';
@@ -36,7 +18,7 @@
         node.style.background=co;
         node.style.left= X *20;
         node.style.top= Y *20;
-        document.getElementsByTagName('div')[0].appendChild(node);
+        document.getElementsByTagName('body')[0].appendChild(node);
 
     }
     function MAP(){
@@ -47,8 +29,19 @@
     }
     var $food=document.createElement("div");
     var b = '#' + (Math.random() * 0xffffff << 0).toString(16);
+    if(b=='#FFFFFF'||b=='#FFFFCC'||b=='#EEEEEE'){
+        b = '#' + (Math.random() * 0xffffff << 0).toString(16);
+    }
     var x=Math.floor(Math.random()*800/20);
     var y=Math.floor(Math.random()*600/20);
+    for(var i=0;i<Body.length;i++){
+        if(x==Body[i][0] && y==Body[i][1]){
+            x=Math.floor(Math.random()*800/20);
+            y=Math.floor(Math.random()*600/20);
+        }
+
+    }
+
 
     function FOOD(){
 
@@ -58,7 +51,7 @@
     var $snake=document.createElement("div");
     var snakex=Math.floor(Math.random()*800/20);
     var snakey=Math.floor(Math.random()*600/20);
-    var Body=[];
+
     Body [0]=[snakex,snakey,'#FFFFCC',null];
 
     function Snake() {
@@ -71,7 +64,7 @@
                     Body[i][3].style.height='20px';
                     Body[i][3].style.position='absolute';
                     Body[i][3].style.background=Body[i][2];
-                    document.getElementsByTagName('div')[0].appendChild(Body[i][3]);
+                    document.getElementsByTagName('body')[0].appendChild(Body[i][3]);
 
 
                 }
@@ -122,75 +115,98 @@
             }
         }
 
-        function move() {
+            function move() {
 
-            for (var i = Body.length - 1; i > 0; i--) {
-                Body[i][0] = Body[i - 1][0];
-                Body[i][1] = Body[i - 1][1];
-            }
-
-            switch (direction) {
-                case 'left':
-                {
-                    Body[0][0] = Body[0][0] - 1;
-                    break;
+                for (var i = Body.length - 1; i > 0; i--) {
+                    Body[i][0] = Body[i - 1][0];
+                    Body[i][1] = Body[i - 1][1];
                 }
-                case 'up':
-                {
-                    Body[0][1] = Body[0][1] - 1;
-                    break;
+
+                switch (direction) {
+                    case 'left':
+                    {
+                        Body[0][0] = Body[0][0] - 1;
+                        break;
+                    }
+                    case 'up':
+                    {
+                        Body[0][1] = Body[0][1] - 1;
+                        break;
+                    }
+                    case  'right':
+                    {
+                        Body[0][0] = Body[0][0] + 1;
+                        break;
+                    }
+                    case 'down':
+                    {
+                        Body[0][1] = Body[0][1] + 1;
+                        break;
+                    }
                 }
-                case  'right':
-                {
-                    Body[0][0] = Body[0][0] + 1;
-                    break;
-                }
-                case 'down':
-                {
-                    Body[0][1] = Body[0][1] + 1;
-                    break;
-                }
-            }
-            //checkNextStep();
-            //style($snake, 20, 20, 'absolute', '#FFFFCC', Body[0][0], Body[0][1]);
+                //checkNextStep();
+                //style($snake, 20, 20, 'absolute', '#FFFFCC', Body[0][0], Body[0][1]);
 
-            //timer = setInterval(move, 500);
+                //timer = setInterval(move, 500);
 
-            if (Body[0][0] < 0 || Body[0][0] > 40 || Body[0][1] < 0 || Body[0][1] > 30) {
-                alert('撞墙死亡!' + ' ' + '分数=' + sum);
-                clearInterval(timer);
-                return;
-            }
-
-            if (Body[0][0] == x && Body[0][1] == y) {
-                sum++;
-                //alert(sum);
-                var c = '#' + (Math.random() * 0xffffff << 0).toString(16);
-                var xx = Math.floor(Math.random() * 800 / 20);
-                var yy = Math.floor(Math.random() * 600 / 20);
-                style($food, 20, 20, 'absolute', c, xx, yy);
-                b = c;
-                x = xx;
-                y = yy;
-                Body.push([xx, yy, '#FFFFFF', null])
-
-            }
-            for(var i=0;i<Body.length;i++){
-                if(Body[0][0]==x && Body[0][1]==y){
-                    alert('触碰蛇身!' + ' ' + '分数=' + sum);
+                if (Body[0][0] < 0 || Body[0][0] > 40 || Body[0][1] < 0 || Body[0][1] > 30) {
+                    alert('撞墙死亡!' + ' ' + '分数=' + sum);
                     clearInterval(timer);
                     return;
                 }
+
+                if (Body[0][0] == x && Body[0][1] == y) {
+                    sum++;
+                    //alert(sum);
+                   /* var c = '#' + (Math.random() * 0xffffff << 0).toString(16);
+                    if(c=='#FFFFFF'||c=='#FFFFCC'||c=='#EEEEEE'){
+                        c = '#' + (Math.random() * 0xffffff << 0).toString(16);
+                    }
+                    var xx = Math.floor(Math.random() * 800 / 20);
+                    var yy = Math.floor(Math.random() * 600 / 20);
+                    for(var i=0;i<Body.length;i++){
+                        if(x==Body[i][0] && y==Body[i][1]){
+                            x=Math.floor(Math.random()*800/20);
+                            y=Math.floor(Math.random()*600/20);
+                        }
+
+                    }*/
+                    b = '#' + (Math.random() * 0xffffff << 0).toString(16);
+                    if(b=='#FFFFFF'||b=='#FFFFCC'||b=='#EEEEEE'){
+                        b = '#' + (Math.random() * 0xffffff << 0).toString(16);
+                    }
+                    x=Math.floor(Math.random()*800/20);
+                    y=Math.floor(Math.random()*600/20);
+                    for(var i=0;i<Body.length;i++){
+                        if(x==Body[i][0] && y==Body[i][1]){
+                            x=Math.floor(Math.random()*800/20);
+                            y=Math.floor(Math.random()*600/20);
+                        }
+
+                    }
+
+
+                    style($food, 20, 20, 'absolute', b, x, y);
+                   // b = c;
+                   // x = xx;
+                   // y = yy;
+                    Body.push([x, y, '#FFFFFF', null])
+
+                }
+                for(var i=1;i<Body.length;i++){
+                    if(Body[0][0]==Body[i][0] && Body[0][1]==Body[i][1]){
+                        alert('触碰蛇身!' + ' ' + '分数=' + sum);
+                        clearInterval(timer);
+                        return;
+                    }
+                }
+                snake.show();
+
             }
-            snake.show();
-
-        }
-        timer = setInterval(move, 150);
-
+            timer = setInterval(move, 100);
 
 
     }
-
 
 
 
@@ -208,10 +224,5 @@
 
 
 </script>
-<input class="stop" type="button" value="暂停" onclick="clearInterval(timer)">
-<div class="snake"><div style="width: 800px; height: 600px; position: absolute; background: rgb(238, 238, 238);"></div><div style="width: 20px; height: 20px; position: absolute; left: 600px; top: 220px; background: rgb(96, 245, 167);"></div><div style="width: 20px; height: 20px; position: absolute; left: 480px; top: 100px; background: rgb(255, 255, 204);"></div></div>
-<input class="begin" type="button" value="重新开始" onclick="Snake()">
-
-
-
-</body></html>
+</body>
+</html>

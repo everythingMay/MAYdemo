@@ -5,29 +5,52 @@
 <style>
     .stop{
         margin-left: 850px;
-        width: 150px;
-        height: 80px;
-        font-size: 25pt;
-    }
-    .snake{
-        float: left;
+        width: 80px;
+        height: 25px;
 
     }
     .begin{
         margin-left: 850px;
         margin-top: 20px;
-        width: 150px;
-        height: 80px;
-        font-size: 25pt;
+        width: 80px;
+        height: 25px;
+    }
+    .snake{
+        float: left;
+    }
+    .dropdown {
+        margin-left: 850px;
+        margin-top: 35px;
+        position: relative;
+        display: inline-block;
+    }
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        padding: 12px 16px;
+    }
+    .dropdown:hover .dropdown-content {
+        display: block;
     }
 </style>
 
 <script>
     var map;//地图
-    var food;//食物
+    var food1;//食物
+    var food2;//食物
     var snake;//蛇
     var sum=0;
     var timer;
+    var moveFood;
+    var speed;
+
+    function speedChange(SP){
+        speed =SP.getAttribute('title');
+    }
+
     function style(node,width,height,position,co,X,Y){
         node.style.width= width+'px';
         node.style.height= height+'px';
@@ -50,15 +73,28 @@
     var y=Math.floor(Math.random()*600/20);
 
     function FOOD(){
+        var b2 = '#' + (Math.random() * 0xffffff << 0).toString(16);
+        var x2=Math.floor(Math.random()*800/20);
+        var y2=Math.floor(Math.random()*600/20);
+        function drawFood() {
 
-        style($food,20,20,'absolute',b,x,y);
+            b=b2;
+            x=x2;
+            y=y2;
+            style($food,20,20,'absolute',b,x,y);
+        }
+
+        moveFood = setInterval(drawFood, 8000);
         //document.getElementsByTagName('body')[0].appendChild($food );
     }
+
+
+
     var $snake=document.createElement("div");
     var snakex=Math.floor(Math.random()*800/20);
     var snakey=Math.floor(Math.random()*600/20);
     var Body=[];
-    Body [0]=[snakex,snakey,'#FFFFCC',null];
+    Body [0]=[snakex,snakey,'#009ACD',null];
 
     function Snake() {
         this.show = function () {
@@ -155,12 +191,6 @@
 
             //timer = setInterval(move, 500);
 
-            if (Body[0][0] < 0 || Body[0][0] > 40 || Body[0][1] < 0 || Body[0][1] > 30) {
-                alert('撞墙死亡!' + ' ' + '分数=' + sum);
-                clearInterval(timer);
-                return;
-            }
-
             if (Body[0][0] == x && Body[0][1] == y) {
                 sum++;
                 //alert(sum);
@@ -171,45 +201,66 @@
                 b = c;
                 x = xx;
                 y = yy;
-                Body.push([xx, yy, '#FFFFFF', null])
+                Body.push([xx, yy, '#00C5CD', null])
 
             }
-            for(var i=0;i<Body.length;i++){
-                if(Body[0][0]==x && Body[0][1]==y){
+
+            function showGrade() {
+                document.getElementsByName("grade").innerHTML=sum;
+
+            }
+            showGrade();
+
+            for(var i=1;i<Body.length;i++){
+                if(Body[i][0]==Body[0][0] && Body[i][1]==Body[0][1]){
                     alert('触碰蛇身!' + ' ' + '分数=' + sum);
                     clearInterval(timer);
                     return;
                 }
             }
+
+            if (Body[0][0] < 0 || Body[0][0] > 40 || Body[0][1] < 0 || Body[0][1] > 30) {
+                alert('撞墙死亡!' + ' ' + '分数=' + sum);
+                clearInterval(timer);
+                return ;
+            }
             snake.show();
 
         }
-        timer = setInterval(move, 150);
-
-
+        speed=speedChange(document.getElementsByTagName('p')[0]);
+        console.log(speedChange(document.getElementsByTagName('p')[0]));
+        timer = setInterval(move, speed);
+        console.log(speed);
 
     }
-
-
-
 
     window.onload=function()
     {
         map = new MAP();
 
-        food= new FOOD();
+        food1= new FOOD();
+        food2= new FOOD();
+
 
         snake=new Snake();
         snake.show();
-
-
     }
 
 
 </script>
 <input  class="stop" type="button" value="暂停" onclick="clearInterval(timer)">
 <div class="snake"></div>
-<input  class="begin" type="button" value="重新开始" onclick="Snake()">
+<input  class="begin" type="button" value="继续" onclick="setInterval(move,speed)">
+<input  class="begin" type="button" value="开始/重新开始" onclick="location.reload()">
+<div class="dropdown">
+    <span>选择速度</span>
+    <div class="dropdown-content">
+        <p class="sp" title="500"  onclick="speedChange(this);">慢速</p>
+        <p class="sp" title="250"   onclick="speedChange(this)">中速</p>
+        <p class="sp" title="100"   onclick="speedChange(this)">快速</p>
+    </div>
+</div>
+
 </body>
 </html>
 

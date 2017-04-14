@@ -45,11 +45,9 @@
     var timer;
     var moveFood;
     var speed;
-
     function speedChange(SP){
         speed =SP.getAttribute('title');
     }
-
     function style(node,width,height,position,co,X,Y){
         node.style.width= width+'px';
         node.style.height= height+'px';
@@ -67,7 +65,6 @@
     var b = '#' + (Math.random() * 0xffffff << 0).toString(16);
     var x=Math.floor(Math.random()*800/20);
     var y=Math.floor(Math.random()*600/20);
-
     function FOOD(){
         var b2 = '#' + (Math.random() * 0xffffff << 0).toString(16);
         var x2=Math.floor(Math.random()*800/20);
@@ -78,18 +75,13 @@
             y=y2;
             style($food,20,20,'absolute',b,x,y);
         }
-
         moveFood = setInterval(drawFood, 8000);
     }
-
-
-
     var $snake=document.createElement("div");
     var snakex=Math.floor(Math.random()*800/20);
     var snakey=Math.floor(Math.random()*600/20);
     var Body=[];
     Body [0]=[snakex,snakey,'#009ACD',null];
-
     function Snake() {
         this.show = function ()    
             for(var i=0;i<Body.length;i++){
@@ -104,7 +96,6 @@
                 Body[i][3].style.left=Body[i][0]*20;
                 Body[i][3].style.top=Body[i][1]*20;
             }
-
         }
         direction = '';
         //添加键盘事件
@@ -204,7 +195,6 @@
                     return;
                 }
             }
-
             if (Body[0][0] < 0 || Body[0][0] > 40 || Body[0][1] < 0 || Body[0][1] > 30) {
                 alert('撞墙死亡!' + ' ' + '分数=' + sum);
                 clearInterval(timer);
@@ -240,7 +230,6 @@
         <p class="sp" title="100"   onclick="speedChange(this)">快速</p>
     </div>
 </div>
-
 </body>
 </html>
 

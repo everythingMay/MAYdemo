@@ -97,7 +97,6 @@
             }
         }
         direction = '';
-        //添加键盘事件
         document.onkeydown = function (e) {
             var e = event || window.event || arguments.callee.caller.arguments[0];
             switch (e && e.keyCode) {
@@ -116,7 +115,6 @@
                     }
                     direction = 'up';
                     break;
-
                 }
                 case 39:
                 {
@@ -138,12 +136,10 @@
         }
 
         function move() {
-
             for (var i = Body.length - 1; i > 0; i--) {
                 Body[i][0] = Body[i - 1][0];
                 Body[i][1] = Body[i - 1][1];
             }
-
             switch (direction) {
                 case 'left':
                 {
@@ -166,8 +162,6 @@
                     break;
                 }
             }
-         
-
             if (Body[0][0] == x && Body[0][1] == y) {
                 sum++;
                 var c = '#' + (Math.random() * 0xffffff << 0).toString(16);
@@ -178,15 +172,11 @@
                 x = xx;
                 y = yy;
                 Body.push([xx, yy, '#00C5CD', null])
-
             }
-
             function showGrade() {
                 document.getElementsByName("grade").innerHTML=sum;
-
             }
             showGrade();
-
             for(var i=1;i<Body.length;i++){
                 if(Body[i][0]==Body[0][0] && Body[i][1]==Body[0][1]){
                     alert('触碰蛇身!' + ' ' + '分数=' + sum);

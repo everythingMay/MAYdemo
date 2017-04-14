@@ -93,8 +93,7 @@
     Body [0]=[snakex,snakey,'#009ACD',null];
 
     function Snake() {
-        this.show = function () {
-            //style($snake, 20, 20, 'absolute', '#FFFFCC', snakex, snakey);
+        this.show = function ()    
             for(var i=0;i<Body.length;i++){
                 if(Body[i][3]==null){
                     Body[i][3]=document.createElement("div");
@@ -103,8 +102,6 @@
                     Body[i][3].style.position='absolute';
                     Body[i][3].style.background=Body[i][2];
                     document.getElementsByTagName('div')[0].appendChild(Body[i][3]);
-
-
                 }
                 Body[i][3].style.left=Body[i][0]*20;
                 Body[i][3].style.top=Body[i][1]*20;
@@ -182,14 +179,10 @@
                     break;
                 }
             }
-            //checkNextStep();
-            //style($snake, 20, 20, 'absolute', '#FFFFCC', Body[0][0], Body[0][1]);
-
-            //timer = setInterval(move, 500);
+         
 
             if (Body[0][0] == x && Body[0][1] == y) {
                 sum++;
-                //alert(sum);
                 var c = '#' + (Math.random() * 0xffffff << 0).toString(16);
                 var xx = Math.floor(Math.random() * 800 / 20);
                 var yy = Math.floor(Math.random() * 600 / 20);

@@ -58,7 +58,6 @@
         node.style.left= X *20;
         node.style.top= Y *20;
         document.getElementsByTagName('div')[0].appendChild(node);
-
     }
     function MAP(){
         var $map=document.createElement("div");
@@ -74,7 +73,6 @@
         var x2=Math.floor(Math.random()*800/20);
         var y2=Math.floor(Math.random()*600/20);
         function drawFood() {
-
             b=b2;
             x=x2;
             y=y2;
@@ -109,7 +107,6 @@
 
         }
         direction = '';
-
         //添加键盘事件
         document.onkeydown = function (e) {
             var e = event || window.event || arguments.callee.caller.arguments[0];
@@ -214,27 +211,21 @@
                 return ;
             }
             snake.show();
-
         }
         speed=speedChange(document.getElementsByTagName('p')[0]);
         console.log(speedChange(document.getElementsByTagName('p')[0]));
         timer = setInterval(move, speed);
         console.log(speed);
-
     }
-
     window.onload=function()
     {
         map = new MAP();
 
         food1= new FOOD();
         food2= new FOOD();
-
-
         snake=new Snake();
         snake.show();
     }
-
 
 </script>
 <input  class="stop" type="button" value="暂停" onclick="clearInterval(timer)">

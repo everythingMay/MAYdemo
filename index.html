@@ -35,6 +35,10 @@
     .dropdown:hover .dropdown-content {
         display: block;
     }
+    .sp{
+        width: 160px;
+        height: 35px;
+    }
 </style>
 
 <script>
@@ -44,11 +48,17 @@
     var snake;//蛇
     var sum=0;
     var timer;
+    var timer2;
     var moveFood;
     var speed;
+    var  Move;
 
     function speedChange(SP){
         speed =SP.getAttribute('title');
+        console.log(speed);
+        clearInterval(timer2);
+        timer2=setInterval(Move,speed);
+        return speed;
     }
 
     function style(node,width,height,position,co,X,Y){
@@ -215,6 +225,7 @@
                 if(Body[i][0]==Body[0][0] && Body[i][1]==Body[0][1]){
                     alert('触碰蛇身!' + ' ' + '分数=' + sum);
                     clearInterval(timer);
+                    clearInterval(timer2);
                     return;
                 }
             }
@@ -222,13 +233,14 @@
             if (Body[0][0] < 0 || Body[0][0] > 40 || Body[0][1] < 0 || Body[0][1] > 30) {
                 alert('撞墙死亡!' + ' ' + '分数=' + sum);
                 clearInterval(timer);
+                clearInterval(timer2);
                 return ;
             }
             snake.show();
 
         }
+        Move =move;
         speed=speedChange(document.getElementsByTagName('p')[0]);
-        console.log(speedChange(document.getElementsByTagName('p')[0]));
         timer = setInterval(move, speed);
         console.log(speed);
 
@@ -250,14 +262,17 @@
 </script>
 <input  class="stop" type="button" value="暂停" onclick="clearInterval(timer)">
 <div class="snake"></div>
-<input  class="begin" type="button" value="继续" onclick="setInterval(move,speed)">
+<input  class="begin" type="button" value="继续" onclick="setInterval(Move,speed)">
 <input  class="begin" type="button" value="开始/重新开始" onclick="location.reload()">
 <div class="dropdown">
     <span>选择速度</span>
     <div class="dropdown-content">
-        <p class="sp" title="500"  onclick="speedChange(this);">慢速</p>
-        <p class="sp" title="250"   onclick="speedChange(this)">中速</p>
-        <p class="sp" title="100"   onclick="speedChange(this)">快速</p>
+        <p class="sp" title="1000"  onclick="speedChange(this);">慢速</p>
+        <p class="sp" title="500"   onclick="speedChange(this)">中速</p>
+        <p class="sp" title="150"   onclick="speedChange(this)">快速</p>
+      <!--  <input type="button" class="sp" title="800" value="慢速" onclick="speedChange(this)">
+        <input type="button" class="sp" title="300" value="中速"  onclick="speedChange(this)">
+        <input type="button" class="sp" title="100" value="快速"  onclick="speedChange(this)">-->
     </div>
 </div>
 

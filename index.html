@@ -29,7 +29,7 @@
     var clicktimer;
 
     addEventListener("load",start,false);
-    canvas.addEventListener("click",function(e){
+    canvas.addEventListener("touchend",function(e){
         mouseX= e.layerX;
         mouseY= e.layerY;
         switch (direction){
@@ -289,16 +289,18 @@
     function isDeath(){
         for(var i=0;i<wallCount;i++){
             if(wall[i].x==snake[snake.length-1].x&&wall[i].y==snake[snake.length-1].y){
+                clearInterval(clicktimer);
                 clearInterval(timer);
                 alert('death');
             }
         }
-         for(var i=1;i<snake.length-1;i++){
-         if(snake[snake.length-1].x==snake[i].x&&snake[snake.length-1].y==snake[i].y){
-         clearInterval(timer);
-         alert('触碰蛇身');
-         }
-         }
+        for(var i=1;i<snake.length-1;i++){
+            if(snake[snake.length-1].x==snake[i].x&&snake[snake.length-1].y==snake[i].y){
+                clearInterval(clicktimer);
+                clearInterval(timer);
+                alert('触碰蛇身');
+            }
+        }
     }
 
 

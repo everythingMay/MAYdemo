@@ -1,281 +1,322 @@
+<!doctype html>
 <html>
-<meta charset="UTF-8">
-<title>贪吃蛇2.3</title>
-<body>
+<head>
+    <meta charset="UTF-8">
+    <title>贪吃蛇H5-食物变障碍</title>
+</head>
 <style>
-    .stop{
-        margin-left: 850px;
-        width: 80px;
-        height: 25px;
-
-    }
-    .begin{
-        margin-left: 850px;
-        margin-top: 20px;
-        width: 80px;
-        height: 25px;
-    }
-    .snake{
-        float: left;
-    }
-    .dropdown {
-        margin-left: 850px;
-        margin-top: 35px;
-        position: relative;
-        display: inline-block;
-    }
-    .dropdown-content {
-        display: none;
-        position: absolute;
-        background-color: #f9f9f9;
-        min-width: 160px;
-        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-        padding: 12px 16px;
-    }
-    .dropdown:hover .dropdown-content {
-        display: block;
-    }
-    .sp{
-        width: 160px;
-        height: 35px;
+    #contain{
+        margin: auto;
     }
 </style>
+<body>
+<div id="contain">
+<canvas id="canvas" height="600px" width="800px" ></canvas>
+</div>
 
-<script>
-    var map;//地图
-    var food1;//食物
-    var food2;//食物
-    var snake;//蛇
-    var sum=0;
+<script type="text/javascript">
+    var canvas=document.getElementById('canvas');
+    var ctx=canvas.getContext('2d');
+    var blockSize=20;
+    var foodX;
+    var foodY;
+    var snake=[];
+    var wall=[];
+    var wallCount=0;
+    var direction='right';
+    var isPause=false;
     var timer;
-    var timer2;
-    var moveFood;
-    var speed;
-    var  Move;
+    var clicktimer;
 
-    function speedChange(SP){
-        speed =SP.getAttribute('title');
-        console.log(speed);
-        clearInterval(timer2);
-        timer2=setInterval(Move,speed);
-        return speed;
-    }
-
-    function style(node,width,height,position,co,X,Y){
-        node.style.width= width+'px';
-        node.style.height= height+'px';
-        node.style.position= position;
-        node.style.background=co;
-        node.style.left= X *20;
-        node.style.top= Y *20;
-        document.getElementsByTagName('div')[0].appendChild(node);
-
-    }
-    function MAP(){
-        var $map=document.createElement("div");
-        style($map,800,600,'absolute','#eeeeee');
-        //document.getElementsByTagName('body')[0].appendChild($map);
-
-    }
-    var $food=document.createElement("div");
-    var b = '#' + (Math.random() * 0xffffff << 0).toString(16);
-    var x=Math.floor(Math.random()*800/20);
-    var y=Math.floor(Math.random()*600/20);
-
-    function FOOD(){
-        var b2 = '#' + (Math.random() * 0xffffff << 0).toString(16);
-        var x2=Math.floor(Math.random()*800/20);
-        var y2=Math.floor(Math.random()*600/20);
-        function drawFood() {
-
-            b=b2;
-            x=x2;
-            y=y2;
-            style($food,20,20,'absolute',b,x,y);
-        }
-
-        moveFood = setInterval(drawFood, 8000);
-        //document.getElementsByTagName('body')[0].appendChild($food );
-    }
-
-
-
-    var $snake=document.createElement("div");
-    var snakex=Math.floor(Math.random()*800/20);
-    var snakey=Math.floor(Math.random()*600/20);
-    var Body=[];
-    Body [0]=[snakex,snakey,'#009ACD',null];
-
-    function Snake() {
-        this.show = function () {
-            //style($snake, 20, 20, 'absolute', '#FFFFCC', snakex, snakey);
-            for(var i=0;i<Body.length;i++){
-                if(Body[i][3]==null){
-                    Body[i][3]=document.createElement("div");
-                    Body[i][3].style.width='20px';
-                    Body[i][3].style.height='20px';
-                    Body[i][3].style.position='absolute';
-                    Body[i][3].style.background=Body[i][2];
-                    document.getElementsByTagName('div')[0].appendChild(Body[i][3]);
-
-
-                }
-                Body[i][3].style.left=Body[i][0]*20;
-                Body[i][3].style.top=Body[i][1]*20;
+    addEventListener("load",start,false);
+    canvas.addEventListener("click",function(e){
+        mouseX= e.layerX;
+        mouseY= e.layerY;
+        switch (direction){
+            case 'left':
+            case 'right':
+            {
+                if(mouseY>snake[snake.length-1].y){
+                    direction='down';
+                    break;
+                }//下
+                if(mouseY<snake[snake.length-1].y){
+                    direction='up';
+                    break;
+                }//上
             }
-
-        }
-        direction = '';
-
-        //添加键盘事件
-        document.onkeydown = function (e) {
-            var e = event || window.event || arguments.callee.caller.arguments[0];
-            switch (e && e.keyCode) {
-                case 37:
-                {
-                    if (direction == 'right') {
-                        break;
-                    }
-                    direction = 'left';
+            case 'up':
+            case 'down':
+            {
+                if(mouseX>snake[snake.length-1].x){
+                    direction='right';
                     break;
-                }
-                case 38:
-                {
-                    if (direction == 'down') {
-                        break;
-                    }
-                    direction = 'up';
+                }//右
+                if(mouseX<snake[snake.length-1].x){
+                    direction='left';
                     break;
-
-                }
-                case 39:
-                {
-                    if (direction == 'left') {
-                        break;
-                    }
-                    direction = 'right';
-                    break;
-                }
-                case 40:
-                {
-                    if (direction == 'up') {
-                        break;
-                    }
-                    direction = 'down';
-                    break;
-                }
+                }//左
             }
         }
+        console.log(direction);
+        clicktimer=setInterval(clickMove,100);
+    });
 
-        function move() {
 
-            for (var i = Body.length - 1; i > 0; i--) {
-                Body[i][0] = Body[i - 1][0];
-                Body[i][1] = Body[i - 1][1];
+    function drawBG(){
+        ctx.fillStyle='rgba(200,100,100,0.3)';
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+    }
+    function drawFood(){
+        ctx.fillStyle='rgba(0,255 ,0,0.5)';
+        ctx.fillRect(foodX,foodY,blockSize,blockSize);
+    }
+    function drawWall(){
+        for(var i=0;i<wall.length;i++){
+        //ctx.beginPath();
+        ctx.fillStyle='rgba(0,0,255,1)';
+        ctx.fillRect(wall[i].x,wall[i].y,blockSize,blockSize);
+        }
+    }
+    function drawSnake(){
+        for(var i=0;i<snake.length;i++){
+            ctx.beginPath();
+            ctx.fillStyle='rgba(40,40,40,0.5)';
+            ctx.fillRect(snake[i].x,snake[i].y,blockSize,blockSize);
+            ctx.moveTo(snake[i].x,snake[i].y);
+            ctx.lineTo(snake[i].x,snake[i].y+blockSize);
+            ctx.lineTo(snake[i].x+blockSize,snake[i].y+blockSize);
+            ctx.lineTo(snake[i].x+blockSize,snake[i].y);
+            ctx.closePath();
+            ctx.strokeStyle='white';
+            ctx.stroke();
+        }
+    }
+    function addFood(){
+        foodX=Math.floor(Math.random()*(canvas.width/blockSize-1))*blockSize;
+        foodY=Math.floor(Math.random()*(canvas.height/blockSize-1))*blockSize;
+        for(var i=0;i<wallCount;i++){
+            if(wall[i].x==foodX&&wall[i].y==foodY){
+                return addFood();
+            }else {
+                return;
             }
+        }
+    }
+    function addSnake(){
+       // snake.length++;
+        snake.unshift({x:800,y:600});
+    }
+    function addWall(){
+        wallCount++;
+        wall.unshift({x:foodX,y:foodY});
+    }
+    function move(){
+        clearInterval(clicktimer);
+        switch (direction) {
+            case 'left':
+            {
+                snake.push({x:snake[snake.length-1].x-blockSize,y:snake[snake.length-1].y});
+                break;
+            }
+            case 'up':
+            {
+                snake.push({x:snake[snake.length-1].x,y:snake[snake.length-1].y-blockSize});
+                break;
+            }
+            case  'right':
+            {
+                snake.push({x:snake[snake.length-1].x+blockSize,y:snake[snake.length-1].y});
+                break;
+            }
+            case 'down':
+            {
+                snake.push({x:snake[snake.length-1].x,y:snake[snake.length-1].y+blockSize});
+                break;
+            }
+            default:;
+        }
+        snake.shift();
+        isTouchBound();
+        isDeath();
+        isEat();
+       // ctx.clearRect(0,0,canvas.width,canvas.height);
+        drawBG();
+        drawWall();
+        drawFood();
+        drawSnake();
+    }
 
-            switch (direction) {
-                case 'left':
-                {
-                    Body[0][0] = Body[0][0] - 1;
+    var mouseX;
+    var mouseY;
+    function clickMove(){
+        clearInterval(timer);
+        console.log(mouseX,mouseY);
+        switch (direction){
+            case 'left':
+            case 'right':
+            {
+                if(mouseY>snake[snake.length-1].y){
+                    snake.push({x:snake[snake.length-1].x,y:snake[snake.length-1].y+blockSize});
+                    //direction='down';
+                }//下
+                if(mouseY<snake[snake.length-1].y){
+                    snake.push({x:snake[snake.length-1].x,y:snake[snake.length-1].y-blockSize});
+                    //direction='up';
+                }//上
+                break;
+            }
+            case 'up':
+            case 'down':
+            {
+                if(mouseX>snake[snake.length-1].x){
+                    snake.push({x:snake[snake.length-1].x+blockSize,y:snake[snake.length-1].y});
+                  //  direction='right';
+                }//右
+                if(mouseX<snake[snake.length-1].x){
+                    snake.push({x:snake[snake.length-1].x-blockSize,y:snake[snake.length-1].y});
+                   // direction='left';
+                }//左
+                break;
+            }
+        }
+        snake.shift();
+        isTouchBound();
+        isDeath();
+        isEat();
+        // ctx.clearRect(0,0,canvas.width,canvas.height);
+        drawBG();
+        drawWall();
+        drawFood();
+        drawSnake();
+    }
+
+
+    function Timer(){
+        if(isPause){
+           // clicktimer=setInterval(clickMove,100);
+            timer=setInterval(move,100);
+            isPause=false
+        }else{
+            clearInterval( clicktimer);
+            clearInterval(timer);
+            isPause=true;
+        }
+    }
+
+    function keyDown(keyCode) {
+        switch (keyCode) {
+            case 37:
+            case 65:
+            {
+                if (direction == 'right') {
                     break;
                 }
-                case 'up':
-                {
-                    Body[0][1] = Body[0][1] - 1;
+                direction = 'left';
+                break;
+            }
+            case 38:
+            case 87:
+            {
+                if (direction == 'down') {
                     break;
                 }
-                case  'right':
-                {
-                    Body[0][0] = Body[0][0] + 1;
+                direction = 'up';
+                break;
+            }
+            case 39:
+            case 68:
+            {
+                if (direction == 'left') {
                     break;
                 }
-                case 'down':
-                {
-                    Body[0][1] = Body[0][1] + 1;
+                direction = 'right';
+                break;
+            }
+            case  40:
+            case  83:
+            {
+                if (direction == 'up') {
                     break;
                 }
+                direction = 'down';
+                break;
             }
-            //checkNextStep();
-            //style($snake, 20, 20, 'absolute', '#FFFFCC', Body[0][0], Body[0][1]);
-
-            //timer = setInterval(move, 500);
-
-            if (Body[0][0] == x && Body[0][1] == y) {
-                sum++;
-                //alert(sum);
-                var c = '#' + (Math.random() * 0xffffff << 0).toString(16);
-                var xx = Math.floor(Math.random() * 800 / 20);
-                var yy = Math.floor(Math.random() * 600 / 20);
-                style($food, 20, 20, 'absolute', c, xx, yy);
-                b = c;
-                x = xx;
-                y = yy;
-                Body.push([xx, yy, '#00C5CD', null])
-
+            case 32:
+            {
+                Timer();
+                //audioControl();
+                break;
             }
-
-            function showGrade() {
-                document.getElementsByName("grade").innerHTML=sum;
-
+            case 16:
+            {
+                speed=100;
+                break;
             }
-            showGrade();
-
-            for(var i=1;i<Body.length;i++){
-                if(Body[i][0]==Body[0][0] && Body[i][1]==Body[0][1]){
-                    alert('触碰蛇身!' + ' ' + '分数=' + sum);
-                    clearInterval(timer);
-                    clearInterval(timer2);
-                    return;
-                }
+            case 190:{
+                speed=60;
+                break;
             }
+            case 188:{
+                speed=200;
+                break;
+            }
+        }
+    }
+    function isEat(){
+        if(snake[snake.length-1].x==foodX && snake[snake.length-1].y==foodY){
+            addWall();
+            addFood();
+            addSnake();
+        }
+    }
 
-            if (Body[0][0] < 0 || Body[0][0] > 40 || Body[0][1] < 0 || Body[0][1] > 30) {
-                alert('撞墙死亡!' + ' ' + '分数=' + sum);
+    function isTouchBound(){
+        if(snake[snake.length-1].x<0){
+            snake[snake.length-1].x=canvas.width;
+        }
+        if(snake[snake.length-1].x>canvas.width){
+            snake[snake.length-1].x=0;
+        }
+        if(snake[snake.length-1].y<0){
+            snake[snake.length-1].y=canvas.height;
+        }
+        if(snake[snake.length-1].y>canvas.height){
+            snake[snake.length-1].y=0;
+        }
+    }
+
+    function isDeath(){
+        for(var i=0;i<wallCount;i++){
+            if(wall[i].x==snake[snake.length-1].x&&wall[i].y==snake[snake.length-1].y){
                 clearInterval(timer);
-                clearInterval(timer2);
-                return ;
+                alert('death');
             }
-            snake.show();
-
         }
-        Move =move;
-        speed=speedChange(document.getElementsByTagName('p')[0]);
-        timer = setInterval(move, speed);
-        console.log(speed);
-
+       /* for(var i=1;i<snake.length-1;i++){
+            if(snake[snake.length-1].x==snake[i].x&&snake[snake.length-1].y==snake[i].y){
+                clearInterval(timer);
+                alert('触碰蛇身');
+            }
+        }*/
     }
 
-    window.onload=function()
-    {
-        map = new MAP();
 
-        food1= new FOOD();
-        food2= new FOOD();
-
-
-        snake=new Snake();
-        snake.show();
+    function start(){
+        snake[0]={x:0,y:0};
+        drawBG();
+        addFood();
+        drawFood();
+        drawSnake();
+        timer=setInterval(move,100);
+        document.onkeydown = function (event) {
+            var event = event || window.event || arguments.callee.caller.arguments[0];
+            keyDown(event.keyCode||event.which);
+        }
     }
 
 
 </script>
-<input  class="stop" type="button" value="暂停" onclick="clearInterval(timer)">
-<div class="snake"></div>
-<input  class="begin" type="button" value="继续" onclick="setInterval(Move,speed)">
-<input  class="begin" type="button" value="开始/重新开始" onclick="location.reload()">
-<div class="dropdown">
-    <span>选择速度</span>
-    <div class="dropdown-content">
-        <p class="sp" title="1000"  onclick="speedChange(this);">慢速</p>
-        <p class="sp" title="500"   onclick="speedChange(this)">中速</p>
-        <p class="sp" title="150"   onclick="speedChange(this)">快速</p>
-      <!--  <input type="button" class="sp" title="800" value="慢速" onclick="speedChange(this)">
-        <input type="button" class="sp" title="300" value="中速"  onclick="speedChange(this)">
-        <input type="button" class="sp" title="100" value="快速"  onclick="speedChange(this)">-->
-    </div>
-</div>
-
 </body>
 </html>
 
